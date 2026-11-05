@@ -3,6 +3,8 @@ package com.example.inventorymanagementapp
 import android.os.Bundle
 import android.widget.*
 import androidx.activity.ComponentActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 
 data class Item<T>(
     val name: String,
@@ -34,6 +36,25 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // Keep the screen content clear of the status bar, navigation bar,
+        // and display cutouts on Android 15+ edge-to-edge devices.
+        val content = findViewById<android.view.View>(R.id.inventoryRoot)
+        ViewCompat.setOnApplyWindowInsetsListener(content) { view, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or
+                    WindowInsetsCompat.Type.displayCutout()
+            )
+            view.setPadding(bars.left, bars.top, bars.right, 0)
+            insets
+        }
+        val scrollView = findViewById<android.view.View>(R.id.inventoryScroll)
+        ViewCompat.setOnApplyWindowInsetsListener(scrollView) { view, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            view.setPadding(0, 0, 0, bars.bottom)
+            insets
+        }
+        ViewCompat.requestApplyInsets(content)
 
         val nameInput = findViewById<EditText>(R.id.inputName)
         val categoryInput = findViewById<EditText>(R.id.inputCategory)
